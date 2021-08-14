@@ -1,0 +1,493 @@
+					Spring Boot
+..............................................................................................
+
+What is Spring Boot?
+
+Spring Boot is JVM framework to build distributed application.
+
+What is Spring Framework?
+ -Spring Framework makes it easy to create java Enterprise applications.
+
+Early 2000, Java Started becoming more popular in distributed application dev.
+
+Distributed Apps:
+-Monolith Apps
+-MicroService Apps
+
+How Java  Works? Who Provides Java Standarization?
+
+JCP - Java Community Process
+ Who standarize the entire Java Technology.
+
+Types of Java Tech
+JSE 
+  Standard Edition
+-Java Programming language
+-JVM 
+What is spec
+   Rules and regualations how things are working.
+
+What is implementation
+Product which implements specs.
+
+JVM -  Hot Spot(oracle),OpenJdk
+
+JEE -Enterprise Specification
+..............................
+JEE Platform spec : containers /app containers/tools
+
+WebTechnology spec
+ Java servlet
+ JSP
+ JSF
+ Websocket
+ JSTL
+ EL
+Enterprise Application spec
+EJB
+JPA -ORM
+JMS
+JTA
+DI
+Context and DI
+Concurrency Util
+
+Web Services
+
+SOAP based  -JAX-WS
+REST Based  -JAX-RS
+
+Management and Security technologies
+Java EE Security spec
+Java Auth
+Java authorzation
+JAVA EE additional spec
+JMX -Jmeter,Spring Actuator
+
+JME
+....
+ Building Device apps -Mobile Apps
+.............................................................................................
+                            Complixty of JEE Spec and implementation
+.............................................................................................
+
+////////////////////////////////////////////////////////////////////////////
+
+JEE enterprise application:
+............................
+
+Client Layer         Web Layer      Biz layer      Data Layer/Persistency
+
+Browser             Servlet/JSP      EJB               Entity Beans
+
+EJB :Enterprise Java Bean
+  Java Object can support distributed biz operations
+eg: incase of shopping cart
+  I have a bean(java object) which has three apis addToCart,Checkout,Payment)
+
+Api classifications:
+1.Session Bean  - to represent biz logic---jdbc--dml
+2.Enitity bean  -ORM - Object to Table mapping-First orm solution---Hibernate
+3.Message Driven Bean - Message driven systems-RabbitMQ,Kaffka,JMS
+
+Rod  was working in enterprise banking application with jee, he faced lot of complexity in designing ejb driven systems, so he decided to move ejb from JEE application, he wrote book called expert  J2EE ONE ON ONE design and development.
+
+
+
+He proposed a model  that model later on came as The project in "Spring Season" - Spring Framework.
+
+Client Layer         Web Layer      Biz layer                Data Layer/Persistency
+
+Browser             Spring MVC        Spring Services              Spring-orm - Spring-data
+
+Spring development objective is "POJO". (Plain Old Java Object)
+
+When you build enterprise java apps, no plumbing(bolier plate code),Spring framework takes care that plumbing.
+
+..............................................................................................
+				Enterprise application challanges
+..............................................................................................
+
+Java is Object Oriented Programming language.
+
+Apps built on java collection of objects.
+
+Object Oriented Principles:
+...........................
+
+1.Abstraction
+2.Encapsulation
+3.Hierarchy
+4.Typing
+5.Modularity
+----------------------
+6.Concurrency
+7.Persistency
+
+
+
+1.Object Management :Hierarchy
+
+Object Relationship
+
+-HAS-A -  Composition
+-IS-A - Inheritance.
+
+Enterprise application challanges:
+
+1.Object Management
+
+IOC : Inversion of Control
+ Inversion -Do opposit
+ of Control -Management
+
+In enterprise application object creation and linking objects are so complex that should be removed from the developer.
+
+Someone should take care object creation and linking= 
+  =>This process is called as IOC.
+The IOC suggest the automation program,that program called as IOC Container.
+
+The first IOC Container
+1.PICO Container
+2.Spring container : It was born as enterprise container.
+
+Spring container takes care of object creations and object linking .
+Which is other wise called as "Dependency Injection" .
+ Dependency - HAS-A
+    injection - linking objects
+
+
+Spring Application:
+   The application is written in java technology, executed on Spring Container which is runtime for spring applications.spring container runs on jvm
+
+			  Spring Application
+				 |
+			   Spring Container
+				 |
+				JVM
+...................
+
+what is framework?
+   One Stop Solution
+ Collection of tools and technologies provided in one place to build end to end applications mostly.
+  
+What spring framework offers?
+
+ Spring offers collection of many projects.
+
+
+1.Core:
+
+IoC container,
+Events, 
+Resources, 
+i18n,
+Validation,
+Data Binding,
+Type Conversion, 
+SpEL,
+AOP.
+
+Core Project
+1.XML driven
+2.Java Config Driven
+3.Boot Driven
+
+
+2.Web
+Web Servlet	
+ Spring MVC, WebSocket, SockJS, STOMP messaging.
+
+Web Reactive	
+  Spring WebFlux, WebClient, WebSocket.
+
+
+3.Data Access
+  SQL, NOSQL
+SQL:
+Transactions, DAO support, JDBC, ORM, Marshalling XML.
+NOSQL
+Mongodb....
+
+
+Integration	
+  Remoting, JMS, JCA, JMX, Email, Tasks, Scheduling, Cache.
+
+Languages	
+     Kotlin, Groovy, Dynamic languages.
+
+Microservices
+
+Reactive
+
+Cloud 
+
+Event Driven
+
+Serverless
+.............................................................................................
+				   Tools For Spring Application Development
+.............................................................................................
+
+1.JDK 8 - 11
+   HotSpot or OpenJDk
+2.Build Tools
+   Maven,Gradle
+3.Docker
+
+Spring Versions and features
+
+2004 - Spring Framework 1.0 released
+– Champions dependency injection
+– Encourages POJOs
+– Uses XML files to describe application
+  configuration
+– Becomes popular quickly as an EJB
+  alternative
+
+• Spring 2.0 (2006):
+ – XML simplification, async JMS, JPA, AspectJ support
+
+• Spring 2.5 (2007, last release 2.5.6)
+  – Requires Java 1.4+ and supports JUnit 4
+  – Annotation DI, @MVC controllers, XML namespaces
+
+• Spring 3.x (3.2.17 released July 2013)
+
+   – Environment & Profiles, @Cacheable, @EnableXXX …
+   – Requires Java 1.5+ and JUnit 4.7+
+   – REST support, JavaConfig, SpEL, more annotations
+
+• Spring 4.x (released Dec 2016)
+    – Support for Java 8, @Conditional, Web-sockets
+
+• Spring 5.x (2017)
+  MicroService driven Dev features
+   – Reactive programming focus
+   - Functional Programming
+   - Cloud Functionality
+   - Container support
+...............................................................................................
+
+Spring Core Concepts:
+
+1.Spring Bean.
+
+What is Bean?
+   
+  Bean is terminallogy coined by SUN Micro System to name java object.
+
+Object vs Bean?
+
+ -Same but Bean has some special characteristics  which was proposed by SUN micro system via 
+"Java Bean Spec"
+
+It is java class, based Java Bean standards
+ 	-class should be public
+ 	-properties should be private
+ 	-set and get methods - Accessors and mutators
+	-constructors
+
+Why Bean Spec?
+  - in order to standarize the java dev process- Coding Standards.
+
+class Customer {
+  public int id;
+  private String name;
+}
+
+Spring  follows java bean spec in order to create object and links objects.
+
+class CustomerService {
+
+   private CustomerRespository rep;
+
+   CustomerService(){
+
+   }
+   set /get
+
+}
+class CustomerRespository{
+
+
+}
+
+Spring Bean is Java Object follows Bean Specification and also managemented by Spring Container.
+
+.............................................................................................
+				   Spring Bean Creation(Object)
+.............................................................................................
+
+Who creates Spring Beans?
+
+ -Spring Container
+
+ Spring container is java object, which manages object(bean) life cycle like   create,use,destroy.
+
+How spring beans are created?
+
+-> you must have bean definitions outside application biz logic
+-> sp container reads that bean definitions, initalizes the beans.
+
+Architecture:
+
+			POJO Classes(Bean)
+				 |
+    Spring-Application <====>SpringContainer
+      config file		 |
+		       Fullyconfigured System
+
+
+Spring Bean Definitions(file) instructs Spring Container how to create objects(order of creations) and how to link (DI) objects
+............................................................................................
+			Spring Application Configuration Managment
+............................................................................................
+
+Spring Application can be configured in many ways
+
+1.XML files  -  Old and Legacy.
+
+2.Java Config + Annotations
+
+2.1 Java Config -Manual - Write Configuration and logic
+
+ Here Dev need to write Configuration and biz logic , which makes app dev slower.
+
+Just Focus logic, automate configuration itself - AutoConfig
+
+3.AutoConfig:
+    Framework must take care of configuration based on various condtions like
+ i want web and jpa , messaging.
+                        "Birth of Spring Boot"
+
+.............................................................................................
+				Spring Project Setup 
+			    
+
+What are the required components to setup Spring Project.
+
+1.IDE,mvn,java
+
+2.Project layout
+
+
+Spring Project requires
+
+Infra Structure:
+ 1.Project libraries
+
+ 2.Project Configurations
+
+Application Structure
+
+1.Application code
+2.assets - imgs,docs
+3.App Configuration
+
+mvn or gradel
+.............................................................................................
+				    Spring Project Creations
+............................................................................................
+
+Whether you build app using Boot or Old Spring Framework Two things you have to take care
+
+1.Project Dependency -  Libraries- core,web,data,cloud,logger....
+  You have to manage
+  Spring have to manage - Boot via starters
+
+2.Application Configuration
+   -Bean defintions -  xml
+   
+
+
+Spring Project Using Spring Framework method:
+
+
+
+Steps:
+
+1.create Plain Maven Project
+
+pom.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>spring-app</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.3.9</version>
+        </dependency>
+    </dependencies>
+</project>
+
+2.place beans.xml in the class path - resources/beans.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="hello" class="com.valtech.spring.beans.HelloWorld">
+    </bean>
+</beans>
+
+package com.valtech.spring.app;
+
+import com.valtech.spring.beans.HelloWorld;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class HelloApp {
+    public static void main(String[] args) {
+        //Object Creation : Without Spring
+        HelloWorld helloWorld = new HelloWorld();
+        helloWorld.setMessage("Hello Spring");
+        System.out.println(helloWorld.getMessage());
+        //Object creation : Using Spring
+        //Create Spring Container
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        //access bean
+        HelloWorld bean = context.getBean(HelloWorld.class);
+        //set message
+        bean.setMessage("Hello Spring Bean");
+        //get message
+        System.out.println(bean.getMessage());
+
+
+    }
+}
+.............................................................................................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
