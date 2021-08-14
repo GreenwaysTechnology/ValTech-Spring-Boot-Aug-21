@@ -5,4 +5,57 @@
         https://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="hello" class="com.valtech.spring.beans.HelloWorld">
     </bean>
+
+    <bean id="orderA" class="com.valtech.spring.beans.di.Order">
+        <property name="orderId" value="1"></property>
+        <property name="orderValue" value="1000"></property>
+    </bean>
+    <bean id="orderB" class="com.valtech.spring.beans.di.Order">
+        <property name="orderId" value="14"></property>
+        <property name="orderValue" value="45"></property>
+    </bean>
+    <bean id="orderC" class="com.valtech.spring.beans.di.Order">
+        <property name="orderId" value="451"></property>
+        <property name="orderValue" value="1245"></property>
+    </bean>
+
+    <!--    Factory api-->
+    <bean id="authService" class="com.valtech.spring.beans.creation.AuthService" factory-method="getInstance" />
+
+    <bean id="customer" class="com.valtech.spring.beans.di.Customer">
+        <property name="customerId" value="1"/>
+        <property name="name" value="Subramanian"/>
+        <!--Setter Injection-->
+        <property name="address" ref="address"/>
+
+        <constructor-arg>
+            <list>
+                <ref bean="orderA"/>
+                <ref bean="orderB"/>
+                <ref bean="orderC"/>
+            </list>
+        </constructor-arg>
+    </bean>
+    <bean id="newCustomer" class="com.valtech.spring.beans.di.Customer">
+        <property name="customerId" value="1"/>
+        <property name="name" value="default Name"/>
+        <!--Constructor injection !-->
+        <constructor-arg ref="address"></constructor-arg>
+    </bean>
+    <bean id="address" class="com.valtech.spring.beans.di.Address">
+        <property name="city" value="coimbatore"/>
+    </bean>
+    <!--Interface based di    -->
+
+    <bean id="inmemory" class="com.valtech.spring.beans.di.interfaces.CustomerInMemoryRepositoryImpl"></bean>
+    <bean id="jpaimpl" class="com.valtech.spring.beans.di.interfaces.CustomerJPARepositoryImpl"></bean>
+    <bean id="customerservice" class="com.valtech.spring.beans.di.interfaces.CustomerService">
+        <constructor-arg ref="inmemory"/>
+    </bean>
+
+    <!--scopes-->
+<!--    <bean id="clientService" class="com.valtech.spring.beans.scopes.ClientService" scope="singleton" >-->
+<!--    </bean>-->
+    <bean id="clientService" class="com.valtech.spring.beans.scopes.ClientService" scope="prototype" >
+    </bean>
 </beans>

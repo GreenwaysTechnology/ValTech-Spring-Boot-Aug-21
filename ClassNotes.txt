@@ -471,21 +471,628 @@ public class HelloApp {
     }
 }
 .............................................................................................
+				 Dependency Injection
+............................................................................................
+
+What is dependency Injection?
+
+  Linking objects
+  Setting Object Property values
+
+  Setting Object references with Object who refers it.
+
+Dependency Injection on reference types and Primitives
+
+eg:
+  OrderService needs OrderRepository
 
 
+Types of DI:
+
+1.Setter
+    Linking objects after objects created
+2.Constructor
+    Linking objects, During object creation.
+
+When to use Setter vs Constructor?
+
+Note: 
+ Constructor properties are initlized during object creations
+ Settter properties are initlized after object creations
+
+Spring supports both.You can mix and match.
+
+Constructors:
+  ->Enforce mandatory dependencies
+
+Setters:
+ 1.Allow optional dependenices
+
+Eg:
+package com.valtech.spring.beans.di;
+
+public class Customer {
+    private int customerId;
+    private String name;
+    private Address address;
+
+    public Customer() {
+    }
+
+    public Customer(int customerId, String name) {
+        this.customerId = customerId;
+        this.name = name;
+    }
+
+    public Customer(Address address) {
+        this.address = address;
+    }
+
+    public Customer(int customerId, String name, Address address) {
+        this.customerId = customerId;
+        this.name = name;
+        this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "customerId=" + customerId +
+                ", name='" + name + '\'' +
+                ", address=" + address +
+                '}';
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+}
+
+package com.valtech.spring.beans.di;
+
+public class Address {
+    private String city;
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "city='" + city + '\'' +
+                '}';
+    }
+
+    public Address() {
+    }
+
+    public Address(String city) {
+        this.city = city;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+}
+
+package com.valtech.spring.beans.di;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class CustomerDIApp {
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        //access bean
+        Customer customer = context.getBean("customer",Customer.class);
+//        customer.setCustomerId(1);
+//        customer.setName("subramanian");
+//        customer.getAddress().setCity("Coimbatore");
+        System.out.println(customer);
+
+        Customer customer1 = context.getBean("newCustomer",Customer.class);
+        System.out.println(customer1);
 
 
+    }
+
+}
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="hello" class="com.valtech.spring.beans.HelloWorld">
+    </bean>
+    <bean id="customer" class="com.valtech.spring.beans.di.Customer">
+        <property name="customerId" value="1"/>
+        <property name="name" value="Subramanian"/>
+        <!--Setter Injection-->
+        <property name="address" ref="address"/>
+    </bean>
+    <bean id="newCustomer" class="com.valtech.spring.beans.di.Customer">
+        <property name="customerId" value="1"/>
+        <property name="name" value="default Name"/>
+        <!--Constructor injection !-->
+        <constructor-arg ref="address"></constructor-arg>
+    </bean>
+    <bean id="address" class="com.valtech.spring.beans.di.Address">
+        <property name="city" value="coimbatore"/>
+    </bean>
+</beans>
+............................................................................................
+			 Program to Super Type - Interface Driven DI
+............................................................................................
 
 
+beans.xml
+    <bean id="inmemory" class="com.valtech.spring.beans.di.interfaces.CustomerInMemoryRepositoryImpl"></bean>
+    <bean id="jpaimpl" class="com.valtech.spring.beans.di.interfaces.CustomerJPARepositoryImpl"></bean>
+    <bean id="customerservice" class="com.valtech.spring.beans.di.interfaces.CustomerService">
+        <constructor-arg ref="inmemory"/>
+    </bean>
 
 
+package com.valtech.spring.beans.di.interfaces;
+
+public interface CustomerRepository {
+    String findAll();
+}
+package com.valtech.spring.beans.di.interfaces;
+
+public class CustomerInMemoryRepositoryImpl implements  CustomerRepository{
+    @Override
+    public String findAll() {
+        return "CustomerInMemoryRepositoryImpl";
+    }
+}
+package com.valtech.spring.beans.di.interfaces;
+
+public class CustomerJPARepositoryImpl implements CustomerRepository {
+    @Override
+    public String findAll() {
+        return "CustomerJPARepositoryImpl";
+    }
+}
+package com.valtech.spring.beans.di.interfaces;
+
+public class CustomerService {
+    //di with interface
+    private CustomerRepository repository;
+
+    public CustomerService(CustomerRepository repository) {
+        this.repository = repository;
+    }
+
+    public CustomerService() {
+    }
+
+    public CustomerRepository getRepository() {
+        return repository;
+    }
+
+    public void setRepository(CustomerRepository repository) {
+        this.repository = repository;
+    }
+
+    public String findAll() {
+        return repository.findAll();
+    }
+}
+
+package com.valtech.spring.beans.di.interfaces;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class CustomerInterfaceApp {
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        CustomerService customerService = context.getBean("customerservice", CustomerService.class);
+        System.out.println(customerService.findAll());
+    }
+}
+.............................................................................................
+DI Values:
+ You can inject primtives / scaller such as int,sting,char,boolean
+ You can inject Objects(reference types) - Customer,Order,Address,Repository
+ You can inject Collection types - such as List,Map,Set...
+
+Proerty can have child elements:List
+<property name="shippingAddress">
+	<list>
+		<ref bean="address" />
+		<ref bean="address" />
+		<ref bean="address" />
+		<ref bean="address" />
+		<ref bean="address" />
+		<ref bean="address" />
+	</list>
+</property>
+or via constructor
+	<constructor-arg name="orders">
+			<list>
+				<ref bean="orderA" />
+				<ref bean="orderB" />
+				<ref bean="orderC" />
+			</list>
+		</constructor-arg>
+
+<list> -ArrayList
+............................................................................................
+How to add List as dependency?
+
+beans.xml
+ <bean id="customer" class="com.valtech.spring.beans.di.Customer">
+        <property name="customerId" value="1"/>
+        <property name="name" value="Subramanian"/>
+        <!--Setter Injection-->
+        <property name="address" ref="address"/>
+
+        <constructor-arg>
+              <list>
+                  <ref bean="orderA" />
+                  <ref bean="orderB" />
+                  <ref bean="orderC" />
+              </list>
+        </constructor-arg>
+    </bean>
+
+package com.valtech.spring.beans.di;
+
+import java.util.List;
 
 
+package com.valtech.spring.beans.di;
+
+public class Order {
+    private int orderId;
+    private float orderValue;
+
+    public Order() {
+    }
+
+    public Order(int orderId, float orderValue) {
+        super();
+        this.orderId = orderId;
+        this.orderValue = orderValue;
+    }
 
 
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public float getOrderValue() {
+        return orderValue;
+    }
+
+    public void setOrderValue(float orderValue) {
+        this.orderValue = orderValue;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderId=" + orderId +
+                ", orderValue=" + orderValue +
+                '}';
+    }
+}
 
 
+public class Customer {
+    private int customerId;
+    private String name;
+    private Address address;
+    private List<Order> orders;
 
+
+    public Customer(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public Customer() {
+    }
+
+    public Customer(int customerId, String name) {
+        this.customerId = customerId;
+        this.name = name;
+    }
+
+    public Customer(Address address) {
+        this.address = address;
+    }
+
+    public Customer(int customerId, String name, Address address) {
+        this.customerId = customerId;
+        this.name = name;
+        this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "customerId=" + customerId +
+                ", name='" + name + '\'' +
+                ", address=" + address +
+                '}';
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+}
+package com.valtech.spring.beans.di;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class CustomerDIApp {
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println(customer.getOrders());
+
+
+    }
+
+}
+.......................................................................................
+
+Bean Definitions:
+1.How to create bean 
+   class,factory-method
+
+2.How to name beans?
+   id,name,alias
+
+3.scope of the beans? : visibility of the bean
+   singleton,prototype,
+   request,session,application,websocket
+
+4.Dependence Injections
+   constructor
+   setter
+   autowire
+
+5.Lazy initialization mode
+ controlling bean creations
+  eagar-default
+  lazy-ondemand
+  lazy-init="true"
+
+5.How to simplify bean injections? 
+   Autowiring mode 
+ no,byName,byType,constructor   
+.............................................................................................
+					Bean Creation
+............................................................................................
+
+1.Via class  
+   Spring creates using new Operator
+  new Order()
+
+2.Via Factory Pattern
+
+-if constructor marked private
+   via factory factory api
+
+
+beans.xml
+    <bean id="authService" class="com.valtech.spring.beans.creation.AuthService" factory-method="getInstance" />
+
+
+package com.valtech.spring.beans.creation;
+
+public class AuthService {
+    private String userName = "admin";
+    private String password = "admin";
+
+    private AuthService() {
+    }
+
+    // Factory Api
+    public static AuthService getInstance() {
+        return new AuthService();
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    // Biz Api
+    public boolean login(String userName, String password) {
+        if (this.getUserName().equals(userName) && this.getPassword().equals(password)) {
+
+            return true;
+        }
+        return false;
+    }
+}
+
+
+package com.valtech.spring.beans.creation;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class FactoryMainApp {
+    public static void main(String[] args) {
+        ApplicationContext factory = new ClassPathXmlApplicationContext("beans.xml");
+        AuthService auth=factory.getBean("authService",AuthService.class);
+        auth.setUserName("admin");
+        auth.setPassword("admin");
+        boolean isAuth = auth.login("admin", "admin");
+        System.out.println(isAuth ? "Valid" : "Not Valid");
+    }
+}
+.............................................................................................
+					Bean Scopes
+.............................................................................................
+Generally, you can create multiple instance from bean definition.
+  some times if you want to control that bean creation
+you can use bean creation scope.
+
+Spring supports 6 scopes:
+
+1.singleton
+ (Default) Scopes a single bean definition to a single object instance for each Spring IoC container.
+ if you call getBean no of time, spring returns the only one instance at any point of time.
+This is default scope.
+
+package com.valtech.spring.beans.scopes;
+
+public class ClientService {
+    public void findAll() {
+        System.out.println("Client Service-findAll");
+    }
+}
+
+
+    <bean id="clientService" class="com.valtech.spring.beans.scopes.ClientService" scope="singleton" >
+    </bean>
+
+
+package com.valtech.spring.beans.scopes;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class ScopeMain {
+    public static void main(String[] args) {
+        ApplicationContext factory = new ClassPathXmlApplicationContext("beans.xml");
+        ClientService clientService = null;
+        clientService = factory.getBean("clientService", ClientService.class);
+        System.out.println(clientService.hashCode());
+
+        clientService = factory.getBean("clientService", ClientService.class);
+        System.out.println(clientService.hashCode());
+
+        clientService = factory.getBean("clientService", ClientService.class);
+        System.out.println(clientService.hashCode());
+
+    }
+}
+
+2.prototype:
+a new bean instance every time a request for that specific bean is made 
+that is, the bean is injected into another bean or you request it through a getBean() method call on the container.
+
+    <bean id="clientService" class="com.valtech.spring.beans.scopes.ClientService" scope="prototype" >
+    </bean>
+
+package com.valtech.spring.beans.scopes;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class ScopeMain {
+    public static void main(String[] args) {
+        ApplicationContext factory = new ClassPathXmlApplicationContext("beans.xml");
+        ClientService clientService = null;
+        clientService = factory.getBean("clientService", ClientService.class);
+        System.out.println(clientService.hashCode());
+
+        clientService = factory.getBean("clientService", ClientService.class);
+        System.out.println(clientService.hashCode());
+
+        clientService = factory.getBean("clientService", ClientService.class);
+        System.out.println(clientService.hashCode());
+
+    }
+}
+Web Scope:
+3.request 
+ <bean id="flight" class="com.ae.trip.entity.Fight" scope="request"/>
+	HttpServletRequest req;
+	req.setAttribute("flight",flight)
+	
+	->Servlet--->Servlet---Servlet---NServlet---jsp
+	->Servlet----jsp---Servlet--->Servlet--Jps....
+4.session
+	Single User multiple request,storing data about single User
+	HttpSession session;
+	session.setAttribute("flight",flight)
+      <bean id="flight" class="com.ae.trip.entity.Fight" scope="session"/>
+	User---ShoppingCart
+	User---CheckoutScreen
+	User---PaymentScren
+5.application
+	Global Data, eg Offers for all users in the web site
+	ServletContext ctx;
+	ctx.setAttribute("flight",flight)
+	<bean id="offer" class="com.ae.trip.entity.Offer" scope="application"/>
+6.websocket
+
+ ->The request, session, application, and websocket scopes are available only if you use a web-aware Spring ApplicationContext implementation (such as XmlWebApplicationContext)
+............................................................................................
+				DI automations
+............................................................................................
 
 
 
