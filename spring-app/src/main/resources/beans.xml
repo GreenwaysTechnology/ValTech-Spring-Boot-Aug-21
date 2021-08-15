@@ -20,7 +20,7 @@
     </bean>
 
     <!--    Factory api-->
-    <bean id="authService" class="com.valtech.spring.beans.creation.AuthService" factory-method="getInstance" />
+    <bean id="authService" class="com.valtech.spring.beans.creation.AuthService" factory-method="getInstance"/>
 
     <bean id="customer" class="com.valtech.spring.beans.di.Customer">
         <property name="customerId" value="1"/>
@@ -54,8 +54,17 @@
     </bean>
 
     <!--scopes-->
-<!--    <bean id="clientService" class="com.valtech.spring.beans.scopes.ClientService" scope="singleton" >-->
-<!--    </bean>-->
-    <bean id="clientService" class="com.valtech.spring.beans.scopes.ClientService" scope="prototype" >
+    <!--    <bean id="clientService" class="com.valtech.spring.beans.scopes.ClientService" scope="singleton" >-->
+    <!--    </bean>-->
+    <bean id="clientService" class="com.valtech.spring.beans.scopes.ClientService" scope="prototype">
+    </bean>
+    <!--Auto wire -->
+    <bean id="cust"  autowire="byName" class="com.valtech.spring.beans.di.autowire.Customer">
+        <property name="id" value="1"/>
+        <property name="name" value="default"/>
+
+    </bean>
+    <bean id="address" class="com.valtech.spring.beans.di.autowire.Address">
+        <property name="city" value="coimbatore"/>
     </bean>
 </beans>
