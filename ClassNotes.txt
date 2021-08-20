@@ -2366,6 +2366,124 @@ Boolean Operators
 
 Or
 And
+.............................................................................................
+
+ConditionalBean:
+
+-OnBean - The bean if  threre , what should i do
+
+if Mysql dependency (driver jar) in the build path
+     -Create Datasource Object
+           -Add properties - connection string - url,password,userName
+
+
+-OnMissing -Then bean if not there ,what should i do
+  if web missing, then start console container
+      
+package com.valtech.bootapp.conditionalonbean;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class DependantBeanConfig {
+
+    @Bean
+    OptionalBean optionalBean() {
+        return new OptionalBean();
+    }
+
+    @Bean
+    @ConditionalOnBean(OptionalBean.class)
+    //create this bean only if OptionalBean is available , if not dont
+    DependantBean dependantBean() {
+        return new DependantBean();
+    }
+
+    static class DependantBean {
+        public DependantBean() {
+            System.out.println("DependantBean is ready");
+        }
+    }
+
+    static class OptionalBean {
+        public OptionalBean() {
+            System.out.println("OptionalBean is ready");
+
+        }
+    }
+
+}
+.............................................................................................
+@ConditionalOnClass and @ConditionalOnMissingClass
+
+
+
+package com.valtech.bootapp.conditionalonclass;
+
+public class RequiredClass {
+}
+package com.valtech.bootapp.conditionalonclass;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+//@ConditionalOnClass(name = "com.valtech.bootapp.conditionalonclass.RequiredClass2")
+public class SpringConfig {
+
+    @Bean
+    //@ConditionalOnClass(value = RequiredClass.class)
+//    @ConditionalOnClass(name = "com.valtech.bootapp.conditionalonclass.RequiredClass")
+    public MyClass getMyClass() {
+        return new MyClass();
+    }
+    @Bean
+    //@ConditionalOnClass(value = RequiredClass.class)
+//    @ConditionalOnMissingClass("com.valtech.bootapp.conditionalonclass.RequiredClass1")
+    public MyClass getMyClassMissing() {
+        return new MyClass("Missing Class");
+    }
+
+    public static class MyClass {
+
+        public MyClass(String message) {
+            System.out.println(message);
+        }
+
+        public MyClass() {
+            System.out.println("MyClass");
+        }
+    }
+}
+
+main method
+
+		SpringApplication application = new SpringApplication(BootappApplication.class);
+		application.setWebApplicationType(WebApplicationType.NONE);
+		application.setBannerMode(Banner.Mode.OFF);
+		ConfigurableApplicationContext context =application.run(args);
+		HelloWorld helloWorld = context.getBean(HelloWorld.class);
+		System.out.println(helloWorld.sayHello());
+
+
+Conditional Componnent:
+
+@Component
+@ConditionalXXX
+public class MyComponent{}
+
+@ConditionalOnProperty("value.endabled",havingValue="true",matchIfMissing=true)
+@Configuration
+public class CrossCuttingModule{
+
+}
+.............................................................................................
+
+
 ...................................................................................................
 					@SpringBootApplication
 ....................................................................................................
@@ -2427,12 +2545,725 @@ Which application is default App?
 
 Based on starter Dependency.
 spring-boot-starter   ---- Spring Pojo Style app
+..............................................................................................
+				Spring Dev Tools
+..............................................................................................
+
+-Auto reload
+
+How to enable dev tool?
+
+Steps:
+
+1.Add dependency
+
+ <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+2.Enable feature in IDE - intellij idea.
+
+2.1 Build,Exucution,Environment
+ -compiler -
+	Build Project automatically.
+
+2.2.open 
+   settings-Advanced Settings-Allow auto make to start even if developed application is running.
+...........................................................................................
+				RestFull Web Development in Spring Boot
+.............................................................................................
+
+What is Rest?
+
+ REST-Representational State Transfer - Architectural pattern proposed based on HTTP protocal
+to build hypermediea distributed Web Application
+
+What is Restfull?
+  Restfull is Implementation based REST Architecture patterns
+
+RestFull can be implemented in any language,any platform.
+
+Java:
+  JCP defined a spec to build RestFull apps - JAX-RS
+
+JAX-JS -  RestEasy,Jersy
+
+Spring Web Services(RestFull) is not following jcp standards rather than they follow direct REST spec.
+
+Types of Web Apps:
+1.Static web apps -  html - 1989-1995
+2.Dynamic Content Generation Web Applications
+   -CGI - c,perl
+   -J2EE - Servlet,jsp
+   -MS -  ASP,asp.net
+   - PHP
+  etc
+3.Web Services -  Data Interchange among applications
+   XML,JSON,..........
+ XML 
+  Web App can distributed XML docs over http protocal.
+  SOAP over http - SOAP based web services -SOA
+  
+  REST Architecture born to send any type of data format from xml to json,pdf,doc,image,binary
+4.SPA -Single Page Apps 
+   -Client Side Apps
+
+  SPA -------------------------RESTFull
+...............................................................................................
+REST Core Concepts:
+
+RE-Representation - Data format - json,xml,pdf...
+S - State -  Data id,name,ordervalue,
+T - Transfer - sending
+
+How to begin Restfull Web Service based distributed App?
+
+1.Identifying Model(Object)-Domain Object
+
+ eg:
+  Customer,Order,Inventory,Products,Items
+
+2.Resources
+   
+    Program, having apis , gets exectued when ever request comes for accessing object.
+
+ In java Resource is class.
+
+   public class OrderResource{
+
+   }
+   public class CustomerResource{
+
+   }
+
+    public class ProductResource{
+
+   }
 
 
+3.Model URI
+
+ URI - Uniform Resource Identifier.
+
+ /api/orders
+ /api/customers
+ /api/orders/1
+ /api/products/1
+ 
+Client(Could be  humman being or anythoer system(app)) wants data from Distributed System.
+
+Client-----------request(want)---------System---Running on Another Software(WebContainer)---Runs Resources
+................................&&&&&&&&&&&&&&&&&&&&........................................
+				  Spring And Web
+
+Spring can be used to build
+
+1.dynamic content apps
+   Layers
+ MVC - Design pattern
+      DAO
+      Service
+      Controller
+      View - html
+
+2.web services
+
+2.1.Soap Based /XML web services- SOA
+
+2.2.RestFull implementation
+  MVC - Design pattern
+      DAO
+      Service
+      Controller
+
+Spring Projects(modules)
+
+spring-boot-starter-web
+  -can be used to build dynamic content apps- view based apps
+  -can be used to build dynamic content apps- Resources based apps
+.............................................................................................
+			     Reactive programming and Spring
+.............................................................................................
+
+Reactive Programming:
+  
+  It is based on events -Event Driven Programming.
+  It is push based programming
+
+ It decouples caller(Object) and callee(Object)
+
+ Caller -----asks  data---callee 
+ Caller -----request data---callee 
+
+Here callee return either data or error in one short  - Request-Reply Pattern
+
+Callee returns data in sequence(flow of something)    - Streaming  
+  -Data Streaming
+
+Reactive Programming is general concept -http://reactivex.io/
 
 
+Reactive Programming :
+Java:
+    -Rxjava 2  -Netflix
+    -Project Reactor - from pivtol
+    -Mutiny - Redhat
+  
+Project Reactor used inside Spring framework 5 onwards.
+.............................................................................................
+			  Spring Mvc and Project Reactor
+				  Spring-WebFlux
+.............................................................................................
+			  Blocking and Non Blocking
+............................................................................................
+
+What is blocking? and blocking implemneted
+
+What is non blocking and how we can implement non blocking?
 
 
+How to reduce threads and how to enable async programming model.
+
+Java uses - nio,netty,Vert.X,SPring WebFlux.
+...............................................................................................
+			 Reactive + Non Blocking = Spring WebFlux
+...............................................................................................
+
+ - Less threads 
+ - streaming
+  ===High Performance and effective in processing
+
+Netty container used by spring  already reactivifed....
+.............................................................................................
+				RestFull WebServices
+.............................................................................................
+
+Spring MVC Annotations:
+.......................
+
+Core Annotations
+
+@Controller.
+@RestController
+@RequestMapping.
+@PathVariable.
+@RequestParam.
+@ModelAttribute.
+@RequestBody and @ResponseBody.
+@RequestHeader and @ResponseHeader.
+
+Handler methods:
+
+ -Web request handler methods
+
+- public methods
+- Return values
+	
+- accept args
+
+Args:
+ ServletRequest
+ WebRequest
+ HttpSession
+ @PathVariable
+ @MatrixVariable
+ @RequestParam
+ @RequestHeader
+ @RequestBody
+
+Return values:
+............
+@ResponseBody
+ The return value is converted through HttpMessageConverter implementations and written to the response
+  Uses HttpMessageConverter -  XML,JSON,VIEW........
+
+HttpEntity<B>, ResponseEntity<B>
+The return value that specifies the full response (including HTTP headers and body) is to be converted through HttpMessageConverter implementations and written to the response.
+
+Response:
+   Server will send domain data and meta informations = response
+   Domain data  = payload/body
+
+ResponseEntity
+  Wraps - body,+ headers,status code
+
+ResponseEntity
+ using constructor
+ - new ResponseEntity<Customer>(customer, httpHeaders, HttpStatus.OK);
+ using functional style: builder pattern
+..............................................................................................
+				 Controller
+.............................................................................................
+
+Spring Web apps based on popular MVC Design Pattern.
+
+Spring introduced MVC design pattern implemenation via project "Spring-MVC".
+
+SpringMVC was introduced to build dynamic content generation apps  - With View Technologies.
+
+SpringMVC streo type annotation
+
+1.@Controller
+    When you mark the class,spring will invoke methods from the class using "Dispatcher servlet" - Front Controller.
+
+   This controller is used to render views.
+
+2.@ResponseBody
+    This annotation is used to render "data formats - xml ,json"
+
+Web   
+
+ Client----request GET /customers.do---------------|web container will run method-render            views-html view
+
+ Client--ajax--request GET / orders---------------|web container will run method-render            XML/JSON-Data Driven
+ 
+
+3.@RestController
+   This annotation is used to build Restfull applications
+ @Controller
+@ResponseBody
+public @interface RestController {}
+
+4.URI and HTTP Method Mapping
+
+GET /api/resource  -uri
+
+POST /api/resource  -uri
+
+DELETE /api/resource  -uri
+
+PUT /api/resource  -uri
+
+@RequestMapping
+
+GET /greeter
+
+@RestController
+@RequestMapping("/greeter")
+public class GreeterController {
+
+    @RequestMapping(value = "")
+    public String sayHello(){
+        return "Hello Spring !!!!";
+    }
+
+}
+package com.example.restapp.resources;
+
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+
+//@Controller
+//@ResponseBody
+@RestController
+@RequestMapping("/api/greeter")  //main resource
+public class GreeterController {
+
+    //sub resources
+
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @GetMapping
+    public String sayHello() {
+        return "Hello Spring !!!!";
+    }
+
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String create() {
+        return "Save is called";
+    }
+}
+.............................................................................................
+				 Semantic Annoations
+..............................................................................................
+
+Semantic annotations are annotations which gives meaning to dev and also system.
+
+eg:
+@RestController
+
+@GetMapping
+@PostMapping
+@DeleteMapping
+@PutMapping
+
+package com.example.restapp.resources;
+
+
+import org.springframework.web.bind.annotation.*;
+
+
+//@Controller
+//@ResponseBody
+@RestController
+@RequestMapping("/api/greeter")  //main resource
+public class GreeterController {
+
+    //sub resources
+
+    //    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @GetMapping(value = "/list")
+    public String sayHello() {
+        return "Hello Spring !!!!";
+    }
+
+    //@RequestMapping(value = "/create", method = RequestMethod.POST)
+    @PostMapping(value = "/create")
+    public String create() {
+        return "Save is called";
+    }
+
+    @DeleteMapping(value = "/remove")
+    public String remove() {
+        return "delete is called";
+    }
+
+    @PutMapping(value = "/update")
+    public String update() {
+        return "Update is called";
+    }
+
+}
+.............................................................................................
+				Sending Input to Restfull api
+.............................................................................................
+
+1.Parameters : According to REST specfication
+   -Path Parameters
+   -Query Parameters
+   -Matrix Parameters
+   -Form Parameters
+2.Payload
+   -Any thing(data) can be embeded into HTTP body and sent to Server
+
+Path Parameters:
+
+  -Query Information based on dynamic input called path
+
+   /api/resource/{placeholder}
+
+   /api/orders/1
+   /api/orders/2
+
+Depedency Injection:
+
+ @Autowire
+ Service service 
+
+Spring provides many di annotations.
+
+  @PathVariable
+  @RequestParam
+
+
+GET http://localhost:8080/api/customers/3
+
+@RestController
+@RequestMapping("/api")
+public class ParamController {
+
+    //id is place hoder which will be updated based on values
+    @GetMapping(value = "/customers/{id}")
+    public String findById(@PathVariable(value = "id") int id) {
+             return "Got Id " + id;
+    }
+}
+.............................................................................................
+                 QueryParam /Query Strings/ Request Parameters
+
+GET /api/resource?variable=value&variable=value
+
+    //http://localhost:8080/api/customers/filter?ranking=prime
+    @GetMapping(value = "/customers/filter")
+    public String filter(@RequestParam(value = "ranking") String ranking) {
+        return "Filter By " + ranking;
+    }
+............................................................................................
+			Matrix parameters
+........................................................................................
+
+ GET /api/resource/subresource/variable1=value;variable2=value;variable3=value
+
+http://localhost:8080/api/customers/contacts/1234567890
+   //matrix parameters
+    @GetMapping(value = "/customers/contacts/{contactNumber}")
+    public String contactInfo(@PathVariable(value = "contactNumber") @MatrixVariable(required = true) int contactNumber) {
+        return "Customer Contact Number" + contactNumber;
+    }
+.............................................................................................
+				Responses
+..............................................................................................
+
+Response means - content. -
+ 
+  Media type= text/plain;charset=UTF-8
+              application/json ; application/xml
+
+Return Types
+
+1.String
+2.Object
+3.ResponseBody With Object
+4.ResponseEnity
+
+
+1.String
+    //plain text: string
+    @GetMapping("/str")
+    public String hello() {
+        return "Hello";
+    }
+
+
+2.Object 
+
+    @GetMapping("/object")
+    public Customer customer() {
+        return  new Customer(1,"Subramanian");
+    }
+
+Response:
+   Payload - json/xml/plain text
+   meta data
+      -headers
+      -status code
+
+
+3.Object with Status code - 201 ,400,500....
+
+    @PostMapping("/save")
+   // @ResponseBody
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResposeTransfer postForm(@RequestBody LoginForm loginForm) {
+        System.out.println(loginForm);
+        return new ResposeTransfer("Thank you for Posting");
+    }
+
+4.Requirement
+  -Want to send payload
+  -status code
+  -Headers
+
+ResponseEntity
+ @GetMapping("/info")
+    public ResponseEntity sendMoreInfo() {
+        Customer customer = new Customer(1, "Subramanian");
+        //payload,header,status code
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header("myheader","myvalue")
+                .body(customer);
+    }
+.............................................................................................
+				Error/Exception Handling 
+.............................................................................................
+
+Exception is error, if it is thrown by application.
+
+  -Handle or rethrow- propagated to the user application -stack trace..
+
+Best Practice :
+  Exception must be treated like "SucessResponse"
+  You have to send to json report to the client apps.
+
+
+Two patterns
+
+1.class level
+
+package com.example.restapp.resources.errors;
+
+import com.example.restapp.resources.ResposeTransfer;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    @GetMapping("/{id}")
+    public ResponseEntity getById(@PathVariable long id) {
+        if (id == 10) {
+            throw new UserNotFoundException("User Not Found");
+        }
+        return ResponseEntity.ok().body("User found!");
+    }
+
+    //error handler
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity handleError() {
+        return ResponseEntity.status(400).body(new ResposeTransfer("User Not Found"));
+    }
+
+    //inner classes
+    private class UserNotFoundException extends RuntimeException {
+        public UserNotFoundException() {
+        }
+
+        public UserNotFoundException(String message) {
+            super(message);
+        }
+
+        public UserNotFoundException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public UserNotFoundException(Throwable cause) {
+            super(cause);
+        }
+
+        public UserNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+            super(message, cause, enableSuppression, writableStackTrace);
+        }
+    }
+}
+
+
+2.Global level
+
+
+package com.example.restapp.resources.errors;
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice
+class ExceptionHandlerAdvice {
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> showError(RuntimeException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+..............................................................................................
+				Logging
+.............................................................................................
+
+What is Logging?
+
+  Recording various activties of application
+
+-information
+-errors
+-warining
+-trace
+
+ Without having logs is eq to driving a car with your eyes closed
+
+a---b--c---d----x
+
+............................................................................................
+				 Spring boot and logging
+..........................................................................................
+
+Spring boot uses by default a logger framework - logback
+   
+Loggers For Your App:
+
+-Spring Boot Frameworks uses logger information
+
+2021-08-20 12:13:37.822  INFO 16844 --- [           main] c.e.loggingapp.LoggingappApplication     : Starting LoggingappApplication using Java 11.0.11 on LAPTOP-R2TGGFDL with PID 16844 (C:\session\ValTech\loggingapp\target\classes started by sasub in C:\session\ValTech\loggingapp)
+
+-Application logs
+  We have to add logs into application
+
+Date and Time: Millisecond precision and easily sortable.
+Log Level: ERROR, WARN, INFO, DEBUG, or TRACE.
+Process ID.
+A --- separator to distinguish the start of actual log messages.
+Thread name: Enclosed in square brackets (may be truncated for console output).
+Logger name: This is usually the source class name (often abbreviated).
+The log message.
+
+Log Mediums:
+
+1.Console
+2.File
+3.Cloud /Remote Server -  Centeralized Logging Services
+
+
+Logger configuration:
+
+Y can control loggers in the application , what log message,medium can be control.
+
+Via configuration
+
+
+1.application.properties /application.yaml in the application
+logging.level.root=warn
+logging.level.org.springframework.web=debug
+logging.level.org.hibernate=error
+
+2.When you run application 
+
+ java --jar target/myapp.jar --trace 
+
+3.Separate out logger configurations outside application config.
+
+ logback provides an xml configuration called
+  logback.xml
+  logback-spring.xml
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
+    <logger name="com.example.loggingapp" level="INFO"/>
+
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%X{user}] [%X{function}] [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>myapp.log</file>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${app.logPathPrefix}/myproject.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>50MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%thread]
+                [%logger:%line] %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+<!--    <root level="OFF">-->
+<!--        <appender-ref ref="FILE"/>-->
+<!--    </root>-->
+        <root level="trace">
+            <appender-ref ref="FILE" />
+        </root>
+    <springProfile name="dev">
+        <logger name="com.example.loggingapp" level="info"/>
+    </springProfile>
+    <springProfile name="test">
+        <logger name="com.example.loggingapp" level="trace"/>
+    </springProfile>
+</configuration>
 
 
 
